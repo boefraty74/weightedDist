@@ -1,0 +1,882 @@
+{
+  "dataRoles": [
+   {
+      "displayName": "ID",
+      "description": "Unique identifier, used to force the order of rows and prevent removal of identical rows(optional)",
+      "kind": "Grouping",
+      "name": "ID"
+    },
+	{
+      "displayName": "Features",
+      "description": "Only numerical fields allowed. ",
+      "kind": "GroupingOrMeasure",
+      "name": "Values"
+    }, 
+    {
+      "displayName": "Labels",
+      "description": "0/1 or True/False ",
+      "kind": "GroupingOrMeasure",
+      "name": "Labels"
+    }, 
+	{
+      "displayName": "Report",
+      "kind": "GroupingOrMeasure",
+      "name": "Tooltips"
+    }
+  ],
+  "dataViewMappings": [
+    {
+	"conditions": [
+        {
+          "Values": {
+            "max": 8
+          },
+          "Labels": {
+            "max": 1
+          },
+          "ID": {
+            "max": 1
+          },
+		   
+		   "Tooltips": {
+            "max": 10
+          }
+        }
+      ],
+      "scriptResult": {
+        "dataInput": {
+          "table": {
+            "rows": {
+              "select": [
+                {
+                  "for": {
+                    "in": "Values"
+                  }
+                },
+                {
+                  "for": {
+                    "in": "Labels"
+                  }
+                },
+				{
+                  "for": {
+                    "in": "ID"
+                  }
+                },
+				{
+                  "for": {
+                    "in": "Tooltips"
+                  }
+                }
+              ],
+              "dataReductionAlgorithm": {
+                "top": {}
+              }
+            }
+          }
+        },
+        "script": {
+          "scriptProviderDefault": "R",
+          "scriptOutputType": "html",
+          "source": {
+            "objectName": "rcv_script",
+            "propertyName": "source"
+          },
+          "provider": {
+            "objectName": "rcv_script",
+            "propertyName": "provider"
+          }
+        }
+      }
+    }
+  ],
+  "objects": {
+    "rcv_script": {
+      "properties": {
+        "provider": {
+          "type": {
+            "text": true
+          }
+        },
+        "source": {
+          "type": {
+            "scripting": {
+              "source": true
+            }
+          }
+        }
+      }
+    },
+    "mySettingsViz": {
+      "displayName": "Analysis",
+      "properties": {
+        "show": {
+          "displayName": "Show as table",
+          "description": "Show as table",
+          "type": {
+            "bool": true
+          }
+        },
+        "distancesToLabeled": {
+          "displayName": "Distances to labeled",
+          "description": "Distances to labeled observations",
+          "type": {
+            "bool": true
+          }
+        },
+        "distancesToUnlabeled": {
+          "displayName": "Distances to unlabeled",
+          "description": "Distances to unlabeled observations",
+          "type": {
+            "bool": true
+          }
+        },
+        "clusteringResults": {
+          "displayName": "Clustering",
+          "description": "Results of clustering",
+          "type": {
+            "bool": true
+          }
+        },
+        "origFeatures": {
+          "displayName": "Features",
+          "description": "Show original features",
+          "type": {
+            "bool": true
+          }
+        }
+       
+        }
+      },
+      "mySettingsPlot": {
+        "displayName": "Visual",
+        "description": "Visual",
+        "properties": {
+          "show": {
+            "displayName": "show",     
+            "type": {
+              "bool": true
+            }
+          }, 
+          "plotDim": {
+            "displayName": "Dimension",
+            "type": {
+              "enumeration": [
+                {
+                  "displayName": "2",
+                  "value": "2"
+                },
+                {
+                  "displayName": "3",
+                  "value": "3"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "mySettingsFilter": {
+        "displayName": "Report",
+        "description": "Report",
+        "properties": {
+          "show": {
+            "displayName": "show",     
+            "type": {
+              "bool": true
+            }
+          }, 
+          "rtype": {
+            "displayName": "Type",
+            "description": "Type of report",
+            "type": {
+              "enumeration": [
+                {
+                  "displayName": "churn",
+                  "value": "churn"
+                },
+                {
+                  "displayName": "engagement",
+                  "value": "engagement"
+                }
+              ]
+            }
+          },
+          "numRows": {
+            "displayName": "Number of rows",
+            "description": "Number of rows",
+            "type": {
+              "enumeration": [
+                {
+                  "displayName": "3",
+                  "value": "3"
+                },
+                {
+                  "displayName": "5",
+                  "value": "5"
+                },
+                {
+                  "displayName": "7",
+                  "value": "7"
+                },
+                {
+                  "displayName": "10",
+                  "value": "10"
+                },
+                {
+                  "displayName": "25",
+                  "value": "25"
+                },
+                {
+                  "displayName": "50",
+                  "value": "50"
+                },
+                {
+                  "displayName": "100",
+                  "value": "100"
+                }
+              ]
+            }
+          },
+          "keepOnly": {
+            "displayName": "Keep only",
+            "description": "Keep only",
+            "type": {
+              "enumeration": [
+                {
+                  "displayName": "labeled",
+                  "value": "labeled"
+                },
+                {
+                  "displayName": "unlabeled",
+                  "value": "unlabeled"
+                },
+                {
+                  "displayName": "all",
+                  "value": "all"
+                }
+              ]
+            }
+          },
+          "sortBy": {
+            "displayName": "sort by",
+            "description": "sort by",
+            "type": {
+              "enumeration": [
+                {
+                  "displayName": "NN",
+                  "value": "NN"
+                },
+                {
+                  "displayName": "avgNN",
+                  "value": "avgNN"
+                },
+                {
+                  "displayName": "medianNN",
+                  "value": "medianNN"
+                },
+                {
+                  "displayName": "clusterScore",
+                  "value": "clusterScore"
+                }
+              ]
+            }
+          }
+        }
+      },    
+      "mySettingsWeights": {
+      "displayName": "Weights",
+      "description": "Define the influence weights per input column",
+      "properties": {
+          "w1": {
+        "displayName": "w1",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "0",
+                "value": "0"
+              },
+              {
+                "displayName": "0.1",
+                "value": "0.1"
+              },
+              {
+                "displayName": "0.2",
+                "value": "0.2"
+              },
+              {
+                "displayName": "0.3",
+                "value": "0.3"
+              },
+              {
+                "displayName": "0.4",
+                "value": "0.4"
+              },
+              {
+                "displayName": "0.5",
+                "value": "0.5"
+              },
+              {
+                "displayName": "0.6",
+                "value": "0.6"
+              },
+              {
+                "displayName": "0.7",
+                "value": "0.7"
+              },
+              {
+                "displayName": "0.8",
+                "value": "0.8"
+              }
+              ,
+              {
+                "displayName": "0.9",
+                "value": "0.9"
+              },
+              {
+                "displayName": "1.0",
+                "value": "1"
+              }
+            ]
+        }
+      }, 
+      "w2": {
+        "displayName": "w2",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "0",
+                "value": "0"
+              },
+              {
+                "displayName": "0.1",
+                "value": "0.1"
+              },
+              {
+                "displayName": "0.2",
+                "value": "0.2"
+              },
+              {
+                "displayName": "0.3",
+                "value": "0.3"
+              },
+              {
+                "displayName": "0.4",
+                "value": "0.4"
+              },
+              {
+                "displayName": "0.5",
+                "value": "0.5"
+              },
+              {
+                "displayName": "0.6",
+                "value": "0.6"
+              },
+              {
+                "displayName": "0.7",
+                "value": "0.7"
+              },
+              {
+                "displayName": "0.8",
+                "value": "0.8"
+              }
+              ,
+              {
+                "displayName": "0.9",
+                "value": "0.9"
+              },
+              {
+                "displayName": "1.0",
+                "value": "1"
+              }
+            ]
+        }
+      }, 
+      "w3": {
+        "displayName": "w3",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "0",
+                "value": "0"
+              },
+              {
+                "displayName": "0.1",
+                "value": "0.1"
+              },
+              {
+                "displayName": "0.2",
+                "value": "0.2"
+              },
+              {
+                "displayName": "0.3",
+                "value": "0.3"
+              },
+              {
+                "displayName": "0.4",
+                "value": "0.4"
+              },
+              {
+                "displayName": "0.5",
+                "value": "0.5"
+              },
+              {
+                "displayName": "0.6",
+                "value": "0.6"
+              },
+              {
+                "displayName": "0.7",
+                "value": "0.7"
+              },
+              {
+                "displayName": "0.8",
+                "value": "0.8"
+              }
+              ,
+              {
+                "displayName": "0.9",
+                "value": "0.9"
+              },
+              {
+                "displayName": "1.0",
+                "value": "1"
+              }
+            ]
+        }
+      }, 
+      "w4": {
+        "displayName": "w4",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "0",
+                "value": "0"
+              },
+              {
+                "displayName": "0.1",
+                "value": "0.1"
+              },
+              {
+                "displayName": "0.2",
+                "value": "0.2"
+              },
+              {
+                "displayName": "0.3",
+                "value": "0.3"
+              },
+              {
+                "displayName": "0.4",
+                "value": "0.4"
+              },
+              {
+                "displayName": "0.5",
+                "value": "0.5"
+              },
+              {
+                "displayName": "0.6",
+                "value": "0.6"
+              },
+              {
+                "displayName": "0.7",
+                "value": "0.7"
+              },
+              {
+                "displayName": "0.8",
+                "value": "0.8"
+              }
+              ,
+              {
+                "displayName": "0.9",
+                "value": "0.9"
+              },
+              {
+                "displayName": "1.0",
+                "value": "1"
+              }
+            ]
+        }
+      }, 
+      "w5": {
+        "displayName": "w5",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "0",
+                "value": "0"
+              },
+              {
+                "displayName": "0.1",
+                "value": "0.1"
+              },
+              {
+                "displayName": "0.2",
+                "value": "0.2"
+              },
+              {
+                "displayName": "0.3",
+                "value": "0.3"
+              },
+              {
+                "displayName": "0.4",
+                "value": "0.4"
+              },
+              {
+                "displayName": "0.5",
+                "value": "0.5"
+              },
+              {
+                "displayName": "0.6",
+                "value": "0.6"
+              },
+              {
+                "displayName": "0.7",
+                "value": "0.7"
+              },
+              {
+                "displayName": "0.8",
+                "value": "0.8"
+              }
+              ,
+              {
+                "displayName": "0.9",
+                "value": "0.9"
+              },
+              {
+                "displayName": "1.0",
+                "value": "1"
+              }
+            ]
+        }
+      }, 
+      "w6": {
+        "displayName": "w6",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "0",
+                "value": "0"
+              },
+              {
+                "displayName": "0.1",
+                "value": "0.1"
+              },
+              {
+                "displayName": "0.2",
+                "value": "0.2"
+              },
+              {
+                "displayName": "0.3",
+                "value": "0.3"
+              },
+              {
+                "displayName": "0.4",
+                "value": "0.4"
+              },
+              {
+                "displayName": "0.5",
+                "value": "0.5"
+              },
+              {
+                "displayName": "0.6",
+                "value": "0.6"
+              },
+              {
+                "displayName": "0.7",
+                "value": "0.7"
+              },
+              {
+                "displayName": "0.8",
+                "value": "0.8"
+              }
+              ,
+              {
+                "displayName": "0.9",
+                "value": "0.9"
+              },
+              {
+                "displayName": "1.0",
+                "value": "1"
+              }
+            ]
+        }
+      }, 
+      "w7": {
+        "displayName": "w7",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "0",
+                "value": "0"
+              },
+              {
+                "displayName": "0.1",
+                "value": "0.1"
+              },
+              {
+                "displayName": "0.2",
+                "value": "0.2"
+              },
+              {
+                "displayName": "0.3",
+                "value": "0.3"
+              },
+              {
+                "displayName": "0.4",
+                "value": "0.4"
+              },
+              {
+                "displayName": "0.5",
+                "value": "0.5"
+              },
+              {
+                "displayName": "0.6",
+                "value": "0.6"
+              },
+              {
+                "displayName": "0.7",
+                "value": "0.7"
+              },
+              {
+                "displayName": "0.8",
+                "value": "0.8"
+              }
+              ,
+              {
+                "displayName": "0.9",
+                "value": "0.9"
+              },
+              {
+                "displayName": "1.0",
+                "value": "1"
+              }
+            ]
+        }
+      }, 
+      "w8": {
+        "displayName": "w8",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "0",
+                "value": "0"
+              },
+              {
+                "displayName": "0.1",
+                "value": "0.1"
+              },
+              {
+                "displayName": "0.2",
+                "value": "0.2"
+              },
+              {
+                "displayName": "0.3",
+                "value": "0.3"
+              },
+              {
+                "displayName": "0.4",
+                "value": "0.4"
+              },
+              {
+                "displayName": "0.5",
+                "value": "0.5"
+              },
+              {
+                "displayName": "0.6",
+                "value": "0.6"
+              },
+              {
+                "displayName": "0.7",
+                "value": "0.7"
+              },
+              {
+                "displayName": "0.8",
+                "value": "0.8"
+              }
+              ,
+              {
+                "displayName": "0.9",
+                "value": "0.9"
+              },
+              {
+                "displayName": "1.0",
+                "value": "1"
+              }
+            ]
+        }
+      }, 
+      "w9": {
+        "displayName": "w9",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "0",
+                "value": "0"
+              },
+              {
+                "displayName": "0.1",
+                "value": "0.1"
+              },
+              {
+                "displayName": "0.2",
+                "value": "0.2"
+              },
+              {
+                "displayName": "0.3",
+                "value": "0.3"
+              },
+              {
+                "displayName": "0.4",
+                "value": "0.4"
+              },
+              {
+                "displayName": "0.5",
+                "value": "0.5"
+              },
+              {
+                "displayName": "0.6",
+                "value": "0.6"
+              },
+              {
+                "displayName": "0.7",
+                "value": "0.7"
+              },
+              {
+                "displayName": "0.8",
+                "value": "0.8"
+              }
+              ,
+              {
+                "displayName": "0.9",
+                "value": "0.9"
+              },
+              {
+                "displayName": "1.0",
+                "value": "1"
+              }
+            ]
+        }
+      }, 
+  "toScale": {
+            "displayName": "scale (if applicable)",
+            "description": "Standardization is applied to multivariate fields ",
+            "type": {
+              "bool": true
+            }
+          }
+  
+        }
+      }, 
+      "mySettingsKNN": {
+        "displayName": "Nearest Neighbours",
+        "description": "Nearest Neighbours",
+        "properties": {
+          
+          "compensate": {
+            "displayName": "Compensate for labels balance",
+            "description": "Compensate for labels balance ",
+            "type": {
+              "bool": true
+            }
+          }, 
+          "K": {
+            "displayName": "Number of NN",
+            "description": "Number of nearest neighbours",
+            "type": {
+              "enumeration": [
+                {
+                  "displayName": "1",
+                  "value": "1"
+                },
+                {
+                  "displayName": "2",
+                  "value": "2"
+                },
+                {
+                  "displayName": "3",
+                  "value": "3"
+                },
+                {
+                  "displayName": "5",
+                  "value": "5"
+                },
+                {
+                  "displayName": "10",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "Kavg": {
+            "displayName": "Average of",
+            "description": "Number of nearest neighbours to use for average",
+            "type": {
+              "enumeration": [
+                {
+                  "displayName": "1",
+                  "value": "1"
+                },
+                {
+                  "displayName": "2",
+                  "value": "2"
+                },
+                {
+                  "displayName": "3",
+                  "value": "3"
+                },
+                {
+                  "displayName": "5",
+                  "value": "5"
+                },
+                {
+                  "displayName": "10",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "mySettingsClust": {
+        "displayName": "Clustering",
+        "description": "Clustering settings",
+        "properties": {
+          "numClusters": {
+            "displayName": "Number of clusters",
+            "description": "Number of clusters",
+            "type": {
+              "enumeration": [
+                {
+                  "displayName": "1",
+                  "value": "1"
+                },
+                {
+                  "displayName": "2",
+                  "value": "2"
+                },
+                {
+                  "displayName": "3",
+                  "value": "3"
+                },
+                {
+                  "displayName": "4",
+                  "value": "4"
+                },
+                {
+                  "displayName": "5",
+                  "value": "5"
+                },
+                {
+                  "displayName": "6",
+                  "value": "6"
+                },
+                {
+                  "displayName": "7",
+                  "value": "7"
+                }
+              ]
+            }
+          }
+        }
+      } 
+},
+  "suppressDefaultTitle": true
+}

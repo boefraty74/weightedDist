@@ -53,15 +53,6 @@ module powerbi.extensibility.visual {
      public origFeatures: boolean = true;	  
   }
   export class mySettingsWeights {
-    public w1: string = "1";
-    public w2: string = "1";
-    public w3: string = "1";
-    public w4: string = "1";
-    public w5: string = "1";
-    public w6: string = "1";
-    public w7: string = "1";
-    public w8: string = "1";
-    public w9: string = "1";
     public toScale: boolean = true;
 }
   export class mySettingsPlot {

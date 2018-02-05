@@ -24,25 +24,13 @@
  *  THE SOFTWARE.
  */
 module powerbi.extensibility.visual {
-    "use strict";
-    // below is a snippet of a definition for an object which will contain the property values
-    // selected by the users
-    /*interface VisualSettings {
-        lineColor: string;
-    }*/
+    // powerbi.visuals
+    import ISelectionId = powerbi.visuals.ISelectionId;
 
-    // to allow this scenario you should first the following JSON definition to the capabilities.json file
-    // under the "objects" property:
-    // "settings": {
-    //     "displayName": "Visual Settings",
-    //     "description": "Visual Settings Tooltip",
-    //     "properties": {
-    //         "lineColor": {
-    //         "displayName": "Line Color",
-    //         "type": { "fill": { "solid": { "color": true }}}
-    //         }
-    //     }
-    // }
+    // dataview
+    import DataViewObjects = powerbi.extensibility.utils.dataview.DataViewObjects;
+
+    "use strict";
 
     // in order to improve the performance, one can update the <head> only in the initial rendering.
     // set to 'true' if you are using different packages to create the widgets
@@ -53,22 +41,34 @@ module powerbi.extensibility.visual {
         VisualUpdateType.Resize + VisualUpdateType.ResizeEnd
     ];
 
+    interface Column {
+        metadata: DataViewMetadataColumn;
+        weight: number;
+        selectionId: ISelectionId;
+    }
+
     export class Visual implements IVisual {
         private rootElement: HTMLElement;
         private headNodes: Node[];
         private bodyNodes: Node[];
         private settings: VisualSettings;
 
+        private host: IVisualHost;
+
+        private columns: Column[] = [];
+
         public constructor(options: VisualConstructorOptions) {
             if (options && options.element) {
                 this.rootElement = options.element;
             }
+
+            this.host = options.host;
+
             this.headNodes = [];
             this.bodyNodes = [];
         }
 
         public update(options: VisualUpdateOptions): void {
-
             if (!options ||
                 !options.type ||
                 !options.viewport ||
@@ -77,8 +77,12 @@ module powerbi.extensibility.visual {
                 !options.dataViews[0]) {
                 return;
             }
+
             const dataView: DataView = options.dataViews[0];
+
             this.settings = Visual.parseSettings(dataView);
+
+            this.columns = this.parseColumns(dataView && dataView.table);
 
             let payloadBase64: string = null;
             if (dataView.scriptResult && dataView.scriptResult.payloadBase64) {
@@ -96,6 +100,45 @@ module powerbi.extensibility.visual {
 
         public onResizing(finalViewport: IViewport): void {
             /* add code to handle resizing of the view port */
+        }
+
+        private parseColumns(table: DataViewTable): Column[] {
+            if (!table
+                || !table.columns
+                || !table.rows
+                || !table.identity
+            ) {
+                return [];
+            }
+
+            return table.columns
+                .filter((column: DataViewMetadataColumn) => {
+                    return column.roles["Values"];
+                })
+                .map((column: DataViewMetadataColumn, columnIndex: number) => {
+                    const row: DataViewTableRow = table.rows[columnIndex];
+
+                    const weight: number = DataViewObjects.getCommonValue(
+                        row && row.objects && row.objects[0],
+                        { objectName: "mySettingsWeights", propertyName: "weight" },
+                        1
+                    );
+
+                    const selectionId: ISelectionId = this.host.createSelectionIdBuilder()
+                        .withCategory({
+                            source: { queryName: table.columns[0].queryName, displayName: null },
+                            values: null,
+                            identity: [table.identity[columnIndex]],
+                        }, 0)
+                        .withMeasure(table.columns[0].queryName)
+                        .createSelectionId();
+
+                    return {
+                        weight,
+                        selectionId,
+                        metadata: column,
+                    }
+                });
         }
 
         private injectCodeFromPayload(payloadBase64: string): void {
@@ -154,9 +197,34 @@ module powerbi.extensibility.visual {
          * objects and properties you want to expose to the users in the property pane.
          * 
          */
-        public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions):
-            VisualObjectInstance[] | VisualObjectInstanceEnumerationObject {
+        public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] | VisualObjectInstanceEnumerationObject {
+            const { objectName } = options;
+
+            switch (objectName) {
+                case "mySettingsWeights": {
+                    console.log(objectName);
+                    return this.enumerateColumns(objectName, this.columns);
+                }
+            }
+
             return VisualSettings.enumerateObjectInstances(this.settings || VisualSettings.getDefault(), options);
+        }
+
+        private enumerateColumns(objectName: string, columns: Column[]): VisualObjectInstance[] {
+            if (!columns) {
+                return [];
+            }
+
+            return columns.map((column: Column) => {
+                return {
+                    objectName,
+                    displayName: column.metadata.displayName,
+                    selector: column.selectionId.getSelector(),
+                    properties: {
+                        weight: column.weight,
+                    },
+                } as VisualObjectInstance;
+            });
         }
     }
 }
